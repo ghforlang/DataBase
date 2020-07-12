@@ -1,0 +1,54 @@
+一、mysql执行顺序
+1、from
+2、join
+3、on
+4、where
+5、group by
+6、sum，avg，max，min
+7、having
+8、select
+9、distinct
+10、order by
+11、limit
+二、执行计划 - sql执行查询的顺序、如何使用索引、返回结果集行数
+执行计划结果说明
+1、id
+sql执行计划的顺序，id越大执行的优先级就越高(如子查询)，id一样按照顺序执行
+2、select_type
+查询中每个select子句的类型，分别是SIMPLE、PRIMARY、SUBQUERY、DERIVED、UNION、UNION RESULT
+SIMPLE: 查询中不包含任何子查询或者union
+PRIMARY：若包含任何复杂的子部分，最外层查询则被标记为PRIMARY
+SUBQUERY：在SELECT或者WHERE 列表中包含了子查询，则被标记为SUBQUERY
+DERIVED：在FROM列表中包含的子查询被标记为DERIVED(衍生)
+UNION：若第二个SELECT出现在UNION之后，则被标记为UNION；若UNION包含在FROM子句的子查询中，外层SELECT将被标记为：DERIVED
+UNION RESULT：从UNION表获取结果的SELECT被标记为：UNION RESULT
+3、type 查找所需行的方式，或者叫访问类型：ALL、index、range、ref、eq_ref、const（system）、NULL
+ALL:全表扫描
+index：index只遍历索引树；索引以文件形式存在，按照存储结构可以划分为:FULLTEXT、HASH、BTREE、RTREE。
+    对应存储引擎对索引的支持：
+    MyISAM-BTREE,FULLTEXT,RTREE;
+    Innodb-BTREE,RTREE;
+    Memory-HASH,BTREE;
+    NDB-BTREE,HASH,RTREE
+range: 索引范围扫描
+使用in则是使用range范围查询；使用‘<>’或者between都可以使用索引
+ref: 非唯一性索引
+eq_ref:唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。
+const(system):单表中最多只有一个匹配行，查询起来非常迅速，例如根据主键或者唯一索引查询；
+system是const类型的特例，当查询的表只有一行的情况下使用system。
+NULL：不用访问表或者索引，直接就能得到结果。
+4、possible_keys 表示查询时可能使用的索引
+5、key 表示mysql实际决定使用的索引
+6、key_len 表示使用到索引字段的长度（最大可能长度，并非实际使用长度）
+7、ref 显示哪个字段或者常数与key一起被使用
+8、rows 表示mysql需要遍历多少数据才能找到，估算找到所需的记录所需要读取的行数，在innodb上可能是不准确的。
+9、extra：执行情况的说明和描述.比如 ：
+    Using index，表示使用索引，如果只有using index，说明他没有查询到数据库表，只用索引就完成了这个查询，这个叫索引覆盖；
+    Using where， 表示条件查询，如果不读取表的所有数据，或不是仅仅通过索引就可以获取所有需要的数据，或不是仅仅通过索引就可以获取所有需要的数据，则会出现using where
+    Using index condition,查找使用了索引，但是需要回标查询数据
+    Using index & Using where，查找使用了索引，但是需要的数据都在索引列中能找到，所以不需要回表查询数据，注：回表的含义是，先根据索引查询数据，然后在根据确定的数据id和查询条件再去查询具体的数据的过程
+    Using temporary，需要使用临时表来存储结果集，常见于排序和分组查询
+    Using filesort，无法利用索引完成的排序操作，称为文件排序；很多场景都是索引是一个字段，order by 排序的字段与索引字段不一致，导致的using filesort
+
+
+
