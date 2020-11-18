@@ -56,6 +56,13 @@ LOCK TABLE `user` READ LOCAL;
 -- Table_locks_waited的值比较高，则说明存在着较严重的表级锁争用情况
 show status like 'table%';
 
+-- 可以通过检查 InnoDB_row_lock来分析行锁竞争情况
+-- 如果发现锁争用比较严重，如InnoDB_row_lock_waits和InnoDB_row_lock_time_avg的值比较高
+show status like 'innodb_row_lock%';
+
+-- 查看表索引信息;
+SHOW INDEX FROM user;
+
 -- 查询连接数
 SHOW PROCESSLIST ;
 
@@ -72,6 +79,10 @@ SHOW VARIABLES LIKE '%commit%';
 -- 查看缓存大小
 SELECT @@sort_buffer_size;
 SHOW VARIABLES LIKE '%buffer_size%';
+
+-- 关闭/开启mysql服务
+-- service mysqld stop;
+-- service mysqld start;
 
 
 
