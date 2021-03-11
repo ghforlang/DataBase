@@ -1,5 +1,6 @@
 -- 登陆 输入密码
--- mysql -h localhost -u root -p
+-- windows mysql -h localhost -u root -p
+-- mac  mysql -uroot -p
 
 -- 切换到 test库
 USE test;
@@ -12,6 +13,12 @@ SHOW databases ;
 
 -- 查看当前库有哪些表
 SHOW TABLES;
+
+-- 重置mysql密码
+SET PASSWORD FOR 'root'@'localost' = PASSWORD('新密码');
+-- 或者
+ALTER USER USER() IDENTIFIED BY '新密码';
+
 
 -- 查看简单描述表结构
 DESC user;
